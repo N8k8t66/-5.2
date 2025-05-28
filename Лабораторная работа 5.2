@@ -54,6 +54,7 @@ print('Алгоритмический подход время:', algorithmic_tim
 
 functional_time = timeit.timeit(lambda: generate_distributions_functional(T, K), number=NG)
 print('Функциональный подход время:', functional_time, 'сек')
+
 dist_limited = generate_limited_distributions(T, K, M)
 print('\nОптимизация с ограничением M =', M)
 print('Количество распределений с ограничением:', len(dist_limited))
