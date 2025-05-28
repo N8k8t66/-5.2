@@ -1,0 +1,63 @@
+import itertools
+import timeit
+
+T = 5
+K = 3
+M = 3 
+NG = 100 
+
+def generate_distributions_algorithmic(T, K):
+    distributions = []
+    stack = [(0, [0] * K)]
+
+    while stack:
+        item, current = stack.pop()
+        if item == T:
+            distributions.append(current.copy())
+        else:
+            for person in range(K):
+                new_distribution = current.copy()
+                new_distribution[person] += 1
+                stack.append((item + 1, new_distribution))
+    return distributions
+
+def generate_distributions_functional(T, K):
+    return [comb for comb in itertools.product(range(T + 1), repeat=K) if sum(comb) == T]
+
+def generate_limited_distributions(T, K, M):
+    distributions = []
+    stack = [(0, [0] * K)]
+
+    while stack:
+        item, current = stack.pop()
+        if item == T:
+            distributions.append(current.copy())
+        else:
+            for person in range(K):
+                if current[person] < M:
+                    new_distribution = current.copy()
+                    new_distribution[person] += 1
+                    stack.append((item + 1, new_distribution))
+    return distributions
+
+def find_optimal_distribution(distributions):
+    return min(distributions, key=lambda x: max(x))
+
+dist_alg = generate_distributions_algorithmic(T, K)
+print('Алгоритмический подход (количество распределений):', len(dist_alg))
+
+dist_func = generate_distributions_functional(T, K)
+print('Функциональный подход (количество распределений):', len(dist_func))
+
+algorithmic_time = timeit.timeit(lambda: generate_distributions_algorithmic(T, K), number=NG)
+print('Алгоритмический подход (время):', algorithmic_time, 'сек')
+
+functional_time = timeit.timeit(lambda: generate_distributions_functional(T, K), number=NG)
+print('Функциональный подход (время):', functional_time, 'сек')
+dist_limited = generate_limited_distributions(T, K, M)
+print('\nОптимизация с ограничением M =', M)
+print('Количество распределений с ограничением:', len(dist_limited))
+
+optimal_dist = find_optimal_distribution(dist_limited)
+print('Оптимальное распределение:', optimal_dist)
+print('Максимум предметов у одного:', max(optimal_dist))
